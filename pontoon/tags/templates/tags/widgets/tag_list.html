@@ -1,0 +1,41 @@
+{% import 'widgets/latest_activity.html' as LatestActivity %}
+{% import 'widgets/progress_chart.html' as ProgressChart %}
+{% import 'widgets/priority.html' as Priority %}
+
+{% macro header() %}
+  <table class="table table-sort project-list">
+    <thead>
+      <tr>
+        <th class="tag asc">Tag<i class="fa"></i></th>
+        <th class="priority inverted">Priority<i class="fa"></i></th>
+        <th class="latest-activity">Latest Activity<i class="fa"></i></th>
+        <th class="progress">Progress<i class="fa"></i></th>
+        <th class="unreviewed-status inverted" title="Unreviewed suggestions"><span class="fa fa-lightbulb"></span><i class="fa"></i></th>
+      </tr>
+    </thead>
+    <tbody>
+{% endmacro %}
+
+{% macro item(tag, main_link, chart_link, latest_activity, chart, class='limited', link_parameter=False, has_params=False) %}
+  <tr class="{{ class }}">
+    <td class="tag">
+      <h4>
+        <a href="{{ main_link }}">{{ tag.name }}</a>
+      </h4>
+    </td>
+    <td class="priority">
+      {{ Priority.priority(tag.priority) }}
+    </td>
+    <td class="latest-activity">
+      {{ LatestActivity.span(latest_activity) }}
+    </td>
+    <td class="progress" colspan="2">
+      {{ ProgressChart.span(chart, chart_link, link_parameter, has_params) }}
+    </td>
+  </tr>
+{% endmacro %}
+
+{% macro footer() %}
+    </tbody>
+  </table>
+{% endmacro %}

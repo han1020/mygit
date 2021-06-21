@@ -1,0 +1,36 @@
+*.py[co]
+*.sw[po]
+/pontoon/coverage.xml
+pip-log.txt
+docs/_gh-pages
+build.py
+build
+.DS_Store
+node_modules
+*-min.css
+*-min.js
+*-all.js
+.noseids
+tmp/*
+.idea
+.vscode
+*~
+*.mo
+.vagrant
+/env/
+/static/
+/.env
+docs/_build
+venv
+/media/
+.cache/
+coverage/
+
+# Docker
+.docker-build
+docker/config/webapp.env
+docker/config/webapp.env-e
+
+# Webpack
+/assets/
+webpack-stats.json

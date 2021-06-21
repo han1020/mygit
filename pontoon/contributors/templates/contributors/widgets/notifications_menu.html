@@ -1,0 +1,101 @@
+{% macro menu() %}
+{% if user.is_authenticated %}
+
+<div id="notifications" class="notifications select{% if user.unread_notifications_display %} unread{% endif %}">
+
+  <div class="button selector">
+    <i class="icon far fa-bell fa-fw"></i>
+    <i class="badge">{{ user.unread_notifications_display }}</i>
+  </div>
+
+  <div class="menu">
+    {{ list(notifications=user.menu_notifications) }}
+
+    <ul>
+      <li class="horizontal-separator"></li>
+      <li class="see-all"><a href="{{ url('pontoon.contributors.notifications') }}?referrer=ui">See all Notifications</a></li>
+    </ul>
+  </div>
+
+</div>
+
+{% endif %}
+{% endmacro %}
+
+
+{% macro list(notifications, no_title="No new notifications.", no_description="Here you’ll see updates for localizations you contribute to.") %}
+<ul class="notification-list">
+  {% for notification in notifications %}
+    <li class="notification-item" data-id="{{ notification.id }}" data-level="{{ notification.level }}" data-unread="{{ notification.unread|to_json() }}">
+      <div class="item-content">
+        {% set target = notification.target %}
+        {% set description = notification.description %}
+
+        {% if notification.actor.slug %}
+          {% set actor_anchor = notification.actor %}
+          {% set actor_url = url('pontoon.projects.project', notification.actor.slug) %}
+
+        {% elif notification.actor.email %}
+          {% set actor_anchor = notification.actor.name_or_email|nospam %}
+          {% set actor_url = url('pontoon.contributors.contributor.username', notification.actor.username) %}
+        {% endif %}
+
+        {% if target and target.resource %}
+
+          <span class="actor">
+            {{ actor_anchor }}
+          </span>
+
+          <span class="verb">
+            {% set link = url('pontoon.translate', notification.action_object.code, target.resource.project.slug, target.resource.path) %}
+            <a href="{{ link + '?string=' + target.pk|string }}">{{ notification.verb }}</a>
+          </span>
+
+          <span class="target">
+            {{ target.resource.project.name }}
+          </span>
+
+          <p class="timeago">{{ notification.timesince() }} ago</p>
+
+          <div class="message trim">{{ description|linkify|safe }}</div>
+
+        {% else %}
+
+          <span class="actor">
+            <a href="{{ actor_url }}">{{ actor_anchor }}</a>
+          </span>
+
+          <span class="verb">
+            {{ notification.verb }}
+          </span>
+
+          {% if target %}
+            <span class="target">
+              <a href="{{ url('pontoon.projects.project', target.slug) }}">{{ target }}</a>
+            </span>
+          {% endif %}
+
+          <p class="timeago">{{ notification.timesince() }} ago</p>
+
+          {% set description = notification.description %}
+          {% if description %}
+            <div class="message">{{ description|safe }}</div>
+          {% endif %}
+
+        {% endif%}
+      </div>
+    </li>
+    {% if not loop.last %}
+      <li class="horizontal-separator"></li>
+    {% endif %}
+  {% endfor %}
+
+  {% if notifications|length == 0 %}
+    <li class="no">
+      <i class="icon fa fa-bell fa-fw"></i>
+      <p class="title">{{ no_title }}</p>
+      <p class="description">{{ no_description }}</p>
+    </li>
+  {% endif %}
+</ul>
+{% endmacro %}

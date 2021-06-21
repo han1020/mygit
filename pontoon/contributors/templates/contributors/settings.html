@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% import "widgets/checkbox.html" as Checkbox %}
+{% import 'teams/widgets/multiple_team_selector.html' as multiple_team_selector %}
+{% import 'teams/widgets/team_selector.html' as team_selector %}
+
+
+{% block title %}Settings{% endblock %}
+
+{% block before %}
+<!-- Server data -->
+<div id="server" class="hidden"
+     data-username="{{ user.username }}"
+     >
+</div>
+{% endblock %}
+
+{% block heading %}
+<section id="heading">
+  <a class="avatar" href="http://gravatar.com/">
+    <div class="desc">Update profile picture</div>
+    <img class="rounded" src="{{ user.gravatar_url(400) }}" width="200" height="200">
+  </a>
+
+  <h2 id="username">{{ user.first_name }}</h2>
+
+  <ul id="check-boxes" class="info">
+    {{ Checkbox.checkbox('Translate Toolkit Checks', class='quality-checks', attribute='quality_checks', is_enabled=user.profile.quality_checks, title='Run Translate Toolkit checks before submitting translations') }}
+
+    {% if user.translated_locales %}
+      {{ Checkbox.checkbox('Make Suggestions', class='force-suggestions', attribute='force_suggestions', is_enabled=user.profile.force_suggestions, title='Save suggestions instead of translations') }}
+    {% endif %}
+  </ul>
+
+  <div id="user-preference" class="clearfix">
+    <div id="homepage">
+      <span class="label">Select your homepage</span>
+      <span>{{ team_selector.locale(locales, locale) }}</span>
+    </div>
+    <div id="preferred-locale">
+      <span class="label">Select preferred source locale</span>
+      <span>{{ team_selector.locale(preferred_locales, preferred_locale) }}</span>
+    </div>
+  </div>
+
+</section>
+{% endblock %}
+
+{% block bottom %}
+<section id="main">
+  <form method="POST" action="{{ url('pontoon.contributors.settings') }}" class="user-locales-settings">
+    {% csrf_token %}
+    <input type="hidden" name="return_url" value="{{ return_url(request) }}">
+
+    <div id="profile-form">
+      <h3>Personal information</h3>
+      <div class="field">
+          {{ profile_form.first_name.label_tag(label_suffix='') }}
+          {{ profile_form.first_name }}
+          {{ profile_form.first_name.errors }}
+      </div>
+      <div class="field">
+          {{ profile_form.email.label_tag(label_suffix='') }}
+          {{ profile_form.email }}
+          {{ profile_form.email.errors }}
+          <p class="help">{{ profile_form.email.help_text }}</p>
+      </div>
+    </div>
+
+    <h3>Preferred locales <span class="small stress">(to get suggestions from)</span></h3>
+
+    {{ multiple_team_selector.render(available_locales, selected_locales, form_field='locales_order', sortable=True) }}
+
+    <div class="controls">
+      <a class="cancel" href="{{ return_url(request) }}">Cancel</a>
+      <button class="submit button active">Save</button>
+    </div>
+  </form>
+</section>
+{% endblock %}
+
+{% block extend_css %}
+  {% stylesheet 'settings' %}
+{% endblock %}
+
+{% block extend_js %}
+  {% javascript 'settings' %}
+{% endblock %}

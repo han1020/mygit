@@ -1,0 +1,2 @@
+class InvalidProjectError(ValueError):
+    pass

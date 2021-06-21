@@ -1,0 +1,30 @@
+basepath = "."
+
+locales = [
+    "fr",
+    "sl",
+]
+
+[env]
+    l = "{l10n_base}/values-{locale}/"
+
+[[paths]]
+    reference = "values/strings.properties"
+    l10n = "{l}strings.properties"
+
+[[paths]]
+    reference = "values/strings_reality.properties"
+    l10n = "{l}strings_reality.properties"
+    locales = [
+        "fr",
+    ]
+
+[[paths]]
+    reference = "values/amo.pot"
+    l10n = "{l}amo.po"
+    locales = [
+        "fr",
+    ]
+
+[[includes]]
+    path = "child.toml"

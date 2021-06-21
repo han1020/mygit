@@ -1,0 +1,19 @@
+# minified code
+*.min.js
+*.min.css
+frontend/build
+
+# libraries
+**/base/static/js/lib*
+**/base/static/css/boilerplate.css
+**/base/static/css/fontawesome-all.css
+**/base/static/css/jquery-ui.css
+**/base/static/css/nprogress.css
+**/base/templates/js/pontoon.js
+**/in_context/static/css/agency.css
+**/in_context/static/js/agency.js
+
+# Prevent VSCode to reformat these files if "Format On Save" enabled
+*.html
+*.yml
+**/package.json*

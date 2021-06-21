@@ -1,0 +1,70 @@
+{% import 'widgets/latest_activity.html' as LatestActivity %}
+{% import 'widgets/progress_chart.html' as ProgressChart %}
+{% import 'widgets/deadline.html' as Deadline %}
+{% import 'widgets/priority.html' as Priority %}
+
+{% macro header(request=False, visible=True) %}
+  <table class="table table-sort project-list item-list {% if not visible %}hidden{% endif %}">
+    <thead>
+      <tr>
+        <th class="name asc">Project<i class="fa"></i></th>
+        <th class="deadline">Deadline<i class="fa"></i></th>
+        <th class="priority inverted">Priority<i class="fa"></i></th>
+        <th class="latest-activity">Latest Activity<i class="fa"></i></th>
+        <th class="progress">Progress<i class="fa"></i></th>
+        <th class="unreviewed-status inverted" title="Unreviewed suggestions"><span class="fa fa-lightbulb"></span><i class="fa"></i></th>
+        {% if request %}
+          <th class="all-strings">Number of Strings<i class="fa"></i></th>
+          <th class="check">Request<i class="fa"></i></th>
+        {% endif %}
+      </tr>
+    </thead>
+    <tbody>
+{% endmacro %}
+
+{% macro item(project, main_link, chart_link, latest_activity, chart, class='limited', request=False, link_parameter=False) %}
+  <tr class="{{ class }}">
+    <td class="name" data-slug="{{ project.slug }}">
+      <h4>
+        <a href="{{ main_link }}">{{ project.name }}</a>
+      </h4>
+    </td>
+    <td class="deadline">
+      {{ Deadline.deadline(project.deadline, chart.completion_percent == 100) }}
+    </td>
+    <td class="priority">
+      {{ Priority.priority(project.priority) }}
+    </td>
+    <td class="latest-activity">
+      {{ LatestActivity.span(latest_activity) }}
+    </td>
+    <td class="progress" colspan="2">
+      {% if project.total_strings %}
+        {{ ProgressChart.span(chart, chart_link, link_parameter) }}
+      {% else %}
+        <span class="not-ready">Not synced yet</span>
+      {% endif %}
+    </td>
+    {% if request %}
+      <td class="all-strings">
+        {% if project.total_strings %}
+          <span>{{ project.avg_string_count|intcomma }}</span>
+        {% else %}
+          <span class="not-ready">Not synced yet</span>
+        {% endif %}
+      </td>
+      <td class="check fa fa-fw"></td>
+    {% endif %}
+  </tr>
+{% endmacro %}
+
+{% macro footer(request=False) %}
+    </tbody>
+  </table>
+  {% if request %}
+    <div id="request-item-note">
+      <p>The requested projects won’t be enabled automatically: an email will be sent to Pontoon admins and team managers to evaluate the request. We’ll try to respond as soon as possible. Please make sure to get in touch with the <a href="{{ url('pontoon.teams.info', locale.code) }}">localization team</a> if you are a new contributor.</p>
+    </div>
+    <button id="request-item">Request new projects</button>
+  {% endif %}
+{% endmacro %}

@@ -1,0 +1,36 @@
+# docker-compose for Pontoon development.
+#
+# Note: Requires docker-compose 1.10+.
+version: "2"
+services:
+  # Webapp
+  webapp:
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile
+    image: local/pontoon
+    env_file:
+      - docker/config/webapp.env
+    depends_on:
+      - postgresql
+    ports:
+      - "8000:8000"
+      - "3000:3000"
+    volumes:
+      - ./pontoon:/app/pontoon
+      - ./frontend/src:/app/frontend/src
+      - ./frontend/public:/app/frontend/public
+      - ./tests:/app/tests
+      - ./requirements:/app/requirements
+      - ~/.ssh:/home/pontoon/.ssh
+
+  # Database
+  postgresql:
+    build:
+      context: ./docker/postgres
+      dockerfile: ./Dockerfile
+    environment:
+      # Create the superuser account
+      - POSTGRES_USER=pontoon
+      - POSTGRES_PASSWORD=asdf
+      - POSTGRES_DB=pontoon

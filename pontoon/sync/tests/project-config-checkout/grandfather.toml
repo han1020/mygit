@@ -1,0 +1,7 @@
+basepath = "."
+
+[[includes]]
+    path = "l10n.toml"
+
+[[excludes]]
+    path = "excludes.toml"

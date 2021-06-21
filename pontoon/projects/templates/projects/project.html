@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+{% import 'widgets/heading_info.html' as HeadingInfo %}
+{% import "widgets/menu.html" as Menu %}
+
+{% block title %}{{ project.name }}{% endblock %}
+
+{% block class %}project{% endblock %}
+
+{% block before %}
+<!-- Server data -->
+<div id="server"
+     class="hidden"
+     data-url-split="projects/{{ project.slug }}"
+     data-project="{{ project.slug }}"
+     data-locale-projects="{{ project.available_locales_list()|to_json }}">
+</div>
+{% endblock %}
+
+{% block heading %}
+<section id="heading">
+  <div class="container clearfix">
+    <h1>
+      {{ HeadingInfo.heading_item(
+        title=project.name,
+        link=url('pontoon.projects.project', project.slug))
+      }}
+    </h1>
+
+    <ul class="details">
+      {{ HeadingInfo.details_item_priority(project.priority) }}
+
+      {{ HeadingInfo.details_item_deadline(project.deadline, project.approved_strings == project.total_strings) }}
+
+      {{ HeadingInfo.details_item_url(
+        title='Repository',
+        class='repository',
+        url=project.repositories.first().website)
+      }}
+
+      {{ HeadingInfo.details_item_resources(project.externalresource_set.all()) }}
+
+      {% if project.contact %}
+        {{ HeadingInfo.details_item(
+          title='Contact person',
+          class='contact-person',
+          value=project.contact.name_or_email,
+          value_link=url('pontoon.contributors.contributor.username', project.contact.username))
+        }}
+      {% endif %}
+    </ul>
+
+    {{ HeadingInfo.progress_chart() }}
+    {{ HeadingInfo.progress_chart_legend(project) }}
+  </div>
+</section>
+{% endblock %}
+
+{% block middle %}
+<section id="middle" class="submenu tabs">
+  <div class="container">
+    {% set current_page = request.path.split('/')[2]|default('') %}
+    {% call Menu.submenu() %}
+      {{ Menu.item(
+          'Teams',
+          url('pontoon.projects.project', project.slug),
+          is_active = (current_page == ''),
+          count = project.locales.count(),
+          icon = 'folder',
+        )
+      }}
+      {% if project.tags_enabled and tags %}
+         {{ Menu.item(
+           'Tags',
+           url('pontoon.projects.tags', project.slug),
+           is_active = (current_page == 'tags'),
+           count = tags,
+           icon = 'tag',
+         )
+      }}
+      {% endif %}
+      {{ Menu.item(
+          'Contributors',
+          url('pontoon.projects.contributors', project.slug),
+          is_active = (current_page == 'contributors'),
+          count = False,
+          icon = 'users',
+        )
+      }}
+      {{ Menu.item(
+          'Info',
+          url('pontoon.projects.info', project.slug),
+          is_active = (current_page == 'info'),
+          count = 1 if project.info else False,
+          icon = 'info-circle',
+        )
+      }}
+      {% if request.user.has_perm('base.can_manage_project') %}
+        {{ Menu.item(
+            'Notifications',
+            url('pontoon.projects.notifications', project.slug),
+            is_active = (current_page == 'notifications'),
+            count = False,
+            icon = 'bell',
+          )
+        }}
+      {% endif %}
+    {% endcall %}
+  </div>
+</section>
+{% endblock %}
+
+{% block bottom %}
+<section id="main" class="clearfix">
+  <div class="container">
+
+  </div>
+</section>
+{% endblock %}
+
+{% block extend_css %}
+  {% stylesheet 'project' %}
+{% endblock %}
+
+{% block extend_js %}
+  {% javascript 'project' %}
+{% endblock %}

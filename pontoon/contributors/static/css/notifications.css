@@ -1,0 +1,14 @@
+.right-column ul {
+    max-height: none;
+}
+
+/* No notifications */
+#main.no .left-column {
+    display: none;
+}
+
+#main.no .right-column {
+    background: transparent;
+    float: none;
+    width: auto;
+}

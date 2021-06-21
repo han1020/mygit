@@ -1,0 +1,38 @@
+{
+    "name": "Pontoon",
+    "description": "Pontoon is a translation management system used and developed by the Mozilla localization community.",
+    "repository": {
+        "url": "https://github.com/mozilla/pontoon",
+        "license": "BSD-2-Clause"
+    },
+    "participate": {
+        "home": "https://wiki.mozilla.org/Webdev/GetInvolved/pontoon.mozilla.org",
+        "docs": "https://mozilla-pontoon.readthedocs.io/",
+        "chat": "https://chat.mozilla.org/#/room/#pontoon:mozilla.org",
+        "chat-contacts": [
+            "mathjazz",
+            "adrian",
+            "Pike"
+        ],
+        "mailing-list": "https://discourse.mozilla.org/c/pontoon"
+    },
+    "bugs": {
+        "list": "https://bugzilla.mozilla.org/buglist.cgi?product=Webtools&component=Pontoon",
+        "report": "https://bugzilla.mozilla.org/enter_bug.cgi?product=Webtools&component=Pontoon",
+        "mentored": "https://bugzilla.mozilla.org/buglist.cgi?f1=bug_mentor&o1=isnotempty&query_format=advanced&bug_status=NEW&product=Webtools&component=Pontoon"
+    },
+    "urls": {
+        "prod": "https://pontoon.mozilla.org",
+        "dev": "https://mozilla-pontoon-staging.herokuapp.com"
+    },
+    "keywords": [
+        "python",
+        "django",
+        "html5",
+        "react",
+        "jquery",
+        "javascript",
+        "css",
+        "postgres"
+    ]
+}

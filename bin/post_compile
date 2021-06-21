@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+
+# Install requirements/dev.txt on staging
+if [ "$DJANGO_STAGE" = True ]; then
+    echo "Installing dev requirements..."
+    pip install --require-hashes -r requirements/dev.txt
+fi
+
+# Compile static assets
+export PATH=/app/.heroku/node/bin:$PATH
+npm install .
+pushd frontend && npm install && popd
+
+echo "Running webpack..."
+./node_modules/.bin/webpack -p
+
+echo "Building frontend resources..."
+pushd frontend && npm run build && popd
+
+echo "Collecting static files..."
+./manage.py migrate --noinput
+./manage.py collectstatic --noinput
+
+# Create a file with the current git HEAD revision.
+# We use that file to expose the git revision in our web app, allowing
+# us to use services like whatsdeployed to compare what is deployed to stage and prod for example.
+echo "Current commit being deployed: "
+echo $SOURCE_VERSION
+echo $SOURCE_VERSION > static/revision.txt
+
+# Inform New Relic that a deploy is happening.
+if [ -n "${NEW_RELIC_API_KEY}" ] && [ -n "${NEW_RELIC_APP_NAME}" ]; then
+    echo "Sending deploy notification to New Relic...."
+    curl -sS -H "x-api-key:${NEW_RELIC_API_KEY}" \
+         -d "deployment[app_name]=${NEW_RELIC_APP_NAME}" \
+         -d "deployment[revision]=${SOURCE_VERSION}" \
+         https://api.newrelic.com/deployments.xml > /dev/null
+fi
